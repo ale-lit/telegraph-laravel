@@ -1,5 +1,13 @@
 ### Учебный проект для закрепления полученных знаний на курсе PHP в SkillBox
 
+<div align="center">
+
+▼ ▼ ▼
+------------- |
+<a href="#_"><img src="https://github.com/ale-lit/ale-lit/blob/main/screens/telegraph.jpg" alt="Telegraph"></a>
+
+</div>
+
 ---
 
 **Что нужно сделать:**
