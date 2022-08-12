@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TextController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [TextController::class, 'create'])->name('text.create');
+Route::post('/', [TextController::class, 'store'])->name('text.store');
+Route::get('/{slug}', [TextController::class, 'show'])->name('text.show');
+Route::get('/edit/{slug}', [TextController::class, 'edit'])->name('text.edit');
+Route::put('/{slug}', [TextController::class, 'update'])->name('text.update');
+Route::delete('/{slug}', [TextController::class, 'destroy'])->name('text.destroy');
