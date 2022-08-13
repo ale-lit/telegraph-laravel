@@ -78,11 +78,11 @@ class TextController extends Controller
      */
     public function show($slug, Request $request)
     {
-        $access = false;
-
         // Check access
         if ($token = $request->cookie($slug)) {
-            $access = Hash::check(config('app.key') . $slug, $token);
+            $access = checkAccess($slug, $token);
+        } else {
+            $access = false;
         }
 
         $data = Text::where('slug', $slug)->firstOrFail();
@@ -93,11 +93,20 @@ class TextController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($slug, Request $request)
     {
-        //
+        // Check access
+        if ($token = $request->cookie($slug)) {
+            if (! checkAccess($slug, $token)) {
+                abort(403);
+            }
+        }
+
+        $data = Text::where('slug', $slug)->firstOrFail();
+        return view('main', compact('data'));
     }
 
     /**
