@@ -4,7 +4,7 @@
 
 ▼ ▼ ▼
 ------------- |
-<a href="#_"><img src="https://github.com/ale-lit/ale-lit/blob/main/screens/telegraph.jpg" alt="Telegraph"></a>
+<a href="#_"><img src="https://github.com/ale-lit/ale-lit/blob/main/screens/telegraph.gif" alt="Telegraph"></a>
 
 </div>
 
