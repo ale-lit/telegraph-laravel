@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [TextController::class, 'create'])->name('text.create');
 Route::post('/', [TextController::class, 'store'])->name('text.store');
-Route::get('/{slug}', [TextController::class, 'show'])->name('text.show');
-Route::get('/edit/{slug}', [TextController::class, 'edit'])->name('text.edit');
-Route::put('/{slug}', [TextController::class, 'update'])->name('text.update');
-Route::delete('/{slug}', [TextController::class, 'destroy'])->name('text.destroy');
+Route::get('/{text}', [TextController::class, 'show'])->name('text.show');
+Route::get('/edit/{text}', [TextController::class, 'edit'])->name('text.edit');
+Route::put('/{text}', [TextController::class, 'update'])->name('text.update');
+Route::delete('/{text}', [TextController::class, 'destroy'])->name('text.destroy');
