@@ -1,4 +1,4 @@
-## «Telegraph» (PHP, Laravel, MySQL, Bootstrap) 
+## «Telegraph» (Laravel, PHP, MySQL, Bootstrap) 
 
 <div align="center">
 
