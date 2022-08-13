@@ -65,9 +65,10 @@ class TextController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($slug)
     {
-        //
+        $data = Text::where('slug', $slug)->firstOrFail();
+        return view('show', compact('data'));
     }
 
     /**
