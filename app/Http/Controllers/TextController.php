@@ -33,6 +33,9 @@ class TextController extends Controller
             'author' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email'],
         ]);
+
+        setcookie('author', $validated['author'], time()+60*60*24*365);
+
         // Cut long title
         if (mb_strlen($validated['title']) > 252) {
             $validated['title'] = Str::limit($validated['title'], 252, '...');
@@ -119,6 +122,9 @@ class TextController extends Controller
             'author' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email'],
         ]);
+
+        setcookie('author', $validated['author'], time()+60*60*24*365);
+
         // Cut long title
         if (mb_strlen($validated['title']) > 252) {
             $validated['title'] = Str::limit($validated['title'], 252, '...');
@@ -150,6 +156,6 @@ class TextController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return 123;
     }
 }
