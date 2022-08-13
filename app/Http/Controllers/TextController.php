@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Text;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class TextController extends Controller
@@ -50,8 +51,17 @@ class TextController extends Controller
         if ($result) {
             // notice('Пост успешно опубликован!', 'success');
             // ! TODO: Отправить email $validated['email']
+
+            // Generate secret validate token
+            $token = Hash::make(config('app.key') . $slug);
+
+            // var_dump(Hash::check(config('app.key') . $slug, $token));
+            // var_dump(Hash::check('plain-text', $token));
+
             return redirect()
-                ->route('text.show', $slug);
+                ->route('text.show', $slug)->cookie(
+                    $slug, $token, 60 * 24 * 365
+                );
         } else {
             return back()
                 ->withErrors(['msg' => 'Ошибка сохранения'])
@@ -63,12 +73,20 @@ class TextController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function show($slug)
+    public function show($slug, Request $request)
     {
+        $access = false;
+
+        // Check access
+        if ($token = $request->cookie($slug)) {
+            $access = Hash::check(config('app.key') . $slug, $token);
+        }
+
         $data = Text::where('slug', $slug)->firstOrFail();
-        return view('show', compact('data'));
+        return view('show', compact('data', 'access'));
     }
 
     /**

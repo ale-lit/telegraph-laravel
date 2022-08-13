@@ -9,6 +9,9 @@
 </head>
 <body>
     <div class="container py-3">
+        @if ($access)
+            <a href="{{ route('text.edit', $data['slug']) }}" type="button" class="btn btn-dark btn-sm float-end">Редактировать</a>
+        @endif
         <h1>{{ $data['title'] }}</h1>
         <?= $message??'' ?>
         <p class="text-muted">{{ $data['author']??'Аноним' }} / {{ $data['updated_at']->format('d.m.Y') }}</p>
