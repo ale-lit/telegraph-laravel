@@ -12,6 +12,9 @@
             content: ' *';
             color: red;
         }
+        .date::before {
+            content: '\2022';
+        }
     </style>
 </head>
 <body>
@@ -19,12 +22,5 @@
         <x-notice />
         @yield('content')
     </div>
-    <script>
-        function removeConfirm(slug) {
-            if (confirm('Вы уверены что хотите удалить данный пост?')) {
-                alert(123213);
-            }
-        }
-    </script>
 </body>
 </html>
