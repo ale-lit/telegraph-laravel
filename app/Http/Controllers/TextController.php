@@ -154,8 +154,12 @@ class TextController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($slug)
     {
-        return 123;
+        $text = Text::where('slug', $slug)->firstOrFail();
+        $text->forceDelete();
+        notice('Пост успешно удалён!');
+        return redirect()
+                ->route('text.create');
     }
 }
