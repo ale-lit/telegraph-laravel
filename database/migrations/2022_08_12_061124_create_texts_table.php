@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('texts', function (Blueprint $table) {
             $table->id();
-            $table->string('ip', 45);
-            $table->string('slug', 65);
+            $table->ipAddress('ip');
+            $table->string('slug', 65)->unique();
             $table->string('title', 255);
             $table->text('text');
             $table->string('author', 50)->nullable();

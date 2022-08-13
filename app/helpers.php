@@ -3,16 +3,20 @@
 use Illuminate\Support\Facades\Hash;
 
 if (! function_exists('notice')) {
-    function notice(string $message, string $type): void
+    function notice(string $message, string $type = 'success'): void
     {
-        $sessionName = 'notice' . $type;
-        session([$sessionName => $message]);
+        $message = $type . '-' .  $message;
+        session(['notice' => $message]);
     }
 }
 
 if (! function_exists('checkAccess')) {
-    function checkAccess(string $slug, string $token): bool
+    function checkAccess(string $slug): bool
     {
-        return Hash::check(config('app.key') . $slug, $token);
+        if ($token = request()->cookie($slug)) {
+            return Hash::check(config('app.key') . $slug, $token);
+        } else {
+            return false;
+        }
     }
 }

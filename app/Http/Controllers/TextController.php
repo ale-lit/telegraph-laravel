@@ -33,7 +33,10 @@ class TextController extends Controller
             'author' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email'],
         ]);
-        $validated['title'] = Str::limit($validated['title'], 252, '...');
+        // Cut long title
+        if (mb_strlen($validated['title']) > 252) {
+            $validated['title'] = Str::limit($validated['title'], 252, '...');
+        }
 
         $text = new Text;
         $text->ip = request()->ip();
@@ -49,7 +52,7 @@ class TextController extends Controller
         $result = $text->fill($validated)->save();
 
         if ($result) {
-            // notice('Пост успешно опубликован!', 'success');
+            notice('Пост успешно опубликован!');
             // ! TODO: Отправить email $validated['email']
 
             // Generate secret validate token
@@ -73,17 +76,12 @@ class TextController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function show($slug, Request $request)
+    public function show(string $slug)
     {
         // Check access
-        if ($token = $request->cookie($slug)) {
-            $access = checkAccess($slug, $token);
-        } else {
-            $access = false;
-        }
+        $access = checkAccess($slug);
 
         $data = Text::where('slug', $slug)->firstOrFail();
         return view('show', compact('data', 'access'));
@@ -93,16 +91,13 @@ class TextController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function edit($slug, Request $request)
+    public function edit(string $slug)
     {
         // Check access
-        if ($token = $request->cookie($slug)) {
-            if (! checkAccess($slug, $token)) {
-                abort(403);
-            }
+        if (! checkAccess($slug)) {
+            abort(403);
         }
 
         $data = Text::where('slug', $slug)->firstOrFail();
@@ -116,9 +111,35 @@ class TextController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, string $slug)
     {
-        //
+        $validated = $request->validate([
+            'title' => ['required', 'string'],
+            'text' => ['required', 'string'],
+            'author' => ['nullable', 'string', 'max:50'],
+            'email' => ['nullable', 'email'],
+        ]);
+        // Cut long title
+        if (mb_strlen($validated['title']) > 252) {
+            $validated['title'] = Str::limit($validated['title'], 252, '...');
+        }
+
+        $text = Text::where('slug', $slug)->firstOrFail();
+        $text->ip = request()->ip();
+        $result = $text->fill($validated)->save();
+
+        if ($result) {
+            notice('Пост успешно отредактирован!');
+
+            // ! TODO: Отправить email $validated['email']
+
+            return redirect()
+                ->route('text.show', $slug);
+        } else {
+            return back()
+                ->withErrors(['msg' => 'Ошибка сохранения'])
+                ->withInput();
+        }
     }
 
     /**
