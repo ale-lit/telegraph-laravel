@@ -2,29 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\LinkNotice;
 use App\Models\Text;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class TextController extends Controller
 {
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         return view('main');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -56,13 +47,13 @@ class TextController extends Controller
 
         if ($result) {
             notice('Пост успешно опубликован!');
-            // ! TODO: Отправить email $validated['email']
+
+            if ($validated['email']) {
+                // Mail::to($validated['email'])->send(new LinkNotice($text));
+            }
 
             // Generate secret validate token
             $token = Hash::make(config('app.key') . $slug);
-
-            // var_dump(Hash::check(config('app.key') . $slug, $token));
-            // var_dump(Hash::check('plain-text', $token));
 
             return redirect()
                 ->route('text.show', $slug)->cookie(
@@ -75,31 +66,19 @@ class TextController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show(string $slug)
     {
         // Check access
-        $access = checkAccess($slug);
+        $access = checkAccess($slug) || auth()->check();
 
         $data = Text::where('slug', $slug)->firstOrFail();
         return view('show', compact('data', 'access'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit(string $slug)
     {
         // Check access
-        if (! checkAccess($slug)) {
+        if (! checkAccess($slug) && ! auth()->check()) {
             abort(403);
         }
 
@@ -107,13 +86,6 @@ class TextController extends Controller
         return view('main', compact('data'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, string $slug)
     {
         $validated = $request->validate([
@@ -137,8 +109,6 @@ class TextController extends Controller
         if ($result) {
             notice('Пост успешно отредактирован!');
 
-            // ! TODO: Отправить email $validated['email']
-
             return redirect()
                 ->route('text.show', $slug);
         } else {
@@ -148,12 +118,6 @@ class TextController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($slug)
     {
         $text = Text::where('slug', $slug)->firstOrFail();
