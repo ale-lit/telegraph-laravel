@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TextController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +15,14 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+// Route::get('/aregister', [AuthController::class, 'create']); // Раскоментировать для регистрации нового админа, потом опять закомментировать
+Route::post('/aregister', [AuthController::class, 'store']);
+Route::get('/alogin', [AuthController::class, 'login'])->name('auth.login');
+Route::post('/alogin', [AuthController::class, 'auth']);
+Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+
+Route::get('/admin', [AdminController::class, 'index'])->name('admin.index')->middleware('auth');
 
 Route::get('/', [TextController::class, 'create'])->name('text.create');
 Route::post('/', [TextController::class, 'store'])->name('text.store');
